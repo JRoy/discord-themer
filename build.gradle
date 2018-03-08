@@ -1,0 +1,16 @@
+group 'io.github.wheezygold7931'
+version '0.1'
+
+apply plugin: 'idea'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'net.dv8tion:JDA:+'
+}
