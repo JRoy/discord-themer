@@ -13,4 +13,5 @@ repositories {
 
 dependencies {
     compile 'net.dv8tion:JDA:+'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
 }

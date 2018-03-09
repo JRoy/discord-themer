@@ -1,5 +1,6 @@
-package io.github.wheezygold7931;
+package io.github.wheezygold7931.discordthemer;
 
+import io.github.wheezygold7931.discordthemer.util.DiscordThemerLogger;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 
@@ -16,6 +17,12 @@ public class DiscordThemerBuilder {
 
     private boolean debugMode = false;
     private ActionMode actionMode = ActionMode.QUEUE;
+
+    private String logPrefix = "[discord-themer]";
+    private boolean logDisplayingInfo = true;
+    private boolean logDisplayingWarnings = false;
+    private boolean logDisplayingErrors = true;
+
 
     public DiscordThemerBuilder(JDA jda) throws IllegalArgumentException {
         if (jda == null)
@@ -44,6 +51,26 @@ public class DiscordThemerBuilder {
         throw new IllegalArgumentException("Invalid Theme Directory");
     }
 
+    private DiscordThemerBuilder setLogPrefix(String prefix) {
+        this.logPrefix = prefix;
+        return this;
+    }
+
+    public DiscordThemerBuilder setLogDisplayErrors(boolean logDisplayingErrors) {
+        this.logDisplayingErrors = logDisplayingErrors;
+        return this;
+    }
+
+    public DiscordThemerBuilder setLogDisplayInfo(boolean logDisplayingInfo) {
+        this.logDisplayingInfo = logDisplayingInfo;
+        return this;
+    }
+
+    public DiscordThemerBuilder setLogDisplayWarnings(boolean logDisplayingWarnings) {
+        this.logDisplayingWarnings = logDisplayingWarnings;
+        return this;
+    }
+
     public DiscordThemerBuilder setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
         return this;
@@ -56,7 +83,7 @@ public class DiscordThemerBuilder {
 
     public DiscordThemer build() {
         if (guild != null && file != null)
-            return new DiscordThemer(jda, guild, file, debugMode, actionMode);
+            return new DiscordThemer(jda, guild, file, actionMode, new DiscordThemerLogger(logPrefix, debugMode, logDisplayingInfo, logDisplayingWarnings, logDisplayingErrors));
         throw new IllegalStateException("All values must be set");
     }
 
