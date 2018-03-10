@@ -3,6 +3,6 @@ jdk:
   - oraclejdk8
 os:
   - linux
-sudo: false
+sudo: true
 script:
   - ./gradlew build
