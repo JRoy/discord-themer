@@ -78,7 +78,7 @@ public class DiscordThemer extends ListenerAdapter {
         String filePath = file.getPath();
 
         logger.debug("Validating Theme " + fileName);
-        logger.debug("File Path for " + fileName + " is" + filePath);
+        logger.debug("File Path for " + fileName + " is " + filePath);
 
         Scanner validateScanner;
         try {
@@ -92,8 +92,12 @@ public class DiscordThemer extends ListenerAdapter {
         int roleCount = 0;
         while (validateScanner.hasNextLine()) {
             String curLine = validateScanner.nextLine();
+
             if (curLine.startsWith("/") || curLine.startsWith("#"))
                 continue; // Ignore comments as they will not be used
+
+            if (curLine.isEmpty())
+                continue; //User has decided they like increased parsed times...
 
             String[] lineTokens = curLine.split("[:]");
             if (lineTokens[0].equalsIgnoreCase("MetaData")) {
@@ -120,10 +124,15 @@ public class DiscordThemer extends ListenerAdapter {
         if (metaTokens.containsKey("title") && metaTokens.containsKey("icon") && metaTokens.containsKey("nickname") && metaTokens.containsKey("name")) {
             File image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
 
-            return image.exists() && !image.isDirectory();
+            if (!image.exists() || image.isDirectory()) {
+                logger.error("Invalid Image File: " + metaTokens.get("icon") + ".png");
+                logger.error(" ^ If you were trying to specify another directory, start the metadata value with a slash!");
+                return false;
+            }
+            return true;
         }
 
-        logger.debug("Failed Meta Check!");
+        logger.error("Too little MetaData! Did you use them all?");
         return false;
     }
 
@@ -153,6 +162,9 @@ public class DiscordThemer extends ListenerAdapter {
 
             if (curLine.startsWith("/") || curLine.startsWith("#"))
                 continue; //Do not parse comments (Slash, Double-Slash, Hash-Sign)
+
+            if (curLine.isEmpty())
+                continue; //User has decided they like increased parsed times...
 
             if (lineTokens[0].equalsIgnoreCase("MetaData")) {
                 token.addMetaData(lineTokens[1], lineTokens[2]);
@@ -185,6 +197,7 @@ public class DiscordThemer extends ListenerAdapter {
         try {
             new RunRestAction(guild.getManager().setIcon(Icon.from(new File(themeDir.getPath() + "\\" + token.getServerIconName() + ".png"))), actionMode);
         } catch (IOException e) {
+            logger.error("Your icon file is invalid!");
             e.printStackTrace();
         } finally {
             new RunRestAction(guild.getManager().setName(token.getServerTitle()), actionMode);
