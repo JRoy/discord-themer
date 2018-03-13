@@ -24,12 +24,21 @@ public class DiscordThemerBuilder {
     private boolean logDisplayingErrors = true;
 
 
+    /**
+     * @param jda Your JDA Instance for the Themer
+     * @throws IllegalArgumentException Throws when JDA is null.
+     */
     public DiscordThemerBuilder(JDA jda) throws IllegalArgumentException {
         if (jda == null)
             throw new IllegalArgumentException("JDA cannot be null");
         this.jda = jda;
     }
 
+    /**
+     * Sets the guild for the themer.
+     * @param guildId The id of the guild to be themed.
+     * @throws IllegalArgumentException Throws if the guild does not exist.
+     */
     public DiscordThemerBuilder setGuild(String guildId) throws IllegalArgumentException {
         Guild guild = jda.getGuildById(guildId);
         if (guild != null) {
@@ -40,6 +49,11 @@ public class DiscordThemerBuilder {
     }
 
 
+    /**
+     * Sets the folder where your theme files are stored.
+     * @param path The path to the theme folder; Relative to your jar file by default.
+     * @throws IllegalArgumentException Throws when the path is invalid.
+     */
     public DiscordThemerBuilder setThemeFolder(String path) throws IllegalArgumentException {
         File file = new File(path);
 
@@ -51,36 +65,60 @@ public class DiscordThemerBuilder {
         throw new IllegalArgumentException("Invalid Theme Directory");
     }
 
+    /**
+     * Sets the prefix for any console output.
+     * @param prefix The new prefix
+     */
     private DiscordThemerBuilder setLogPrefix(String prefix) {
         this.logPrefix = prefix;
         return this;
     }
 
+    /**
+     * Sets if you should receive errors in console.
+     */
     public DiscordThemerBuilder setLogDisplayErrors(boolean logDisplayingErrors) {
         this.logDisplayingErrors = logDisplayingErrors;
         return this;
     }
 
+    /**
+     * Sets if you should receive info in console.
+     */
     public DiscordThemerBuilder setLogDisplayInfo(boolean logDisplayingInfo) {
         this.logDisplayingInfo = logDisplayingInfo;
         return this;
     }
 
+    /**
+     * Sets if you should receive warnings in console.
+     */
     public DiscordThemerBuilder setLogDisplayWarnings(boolean logDisplayingWarnings) {
         this.logDisplayingWarnings = logDisplayingWarnings;
         return this;
     }
 
+    /**
+     * Sets if you should receive debug messages in console.
+     */
     public DiscordThemerBuilder setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
         return this;
     }
 
+    /**
+     * Sets the action mode to use.
+     * @param actionMode The target action mode.
+     */
     public DiscordThemerBuilder setActionMode(ActionMode actionMode) {
         this.actionMode = actionMode;
         return this;
     }
 
+    /**
+     * Builds the themer.
+     * @return The built themer.
+     */
     public DiscordThemer build() {
         if (guild != null && file != null)
             return new DiscordThemer(jda, guild, file, actionMode, new DiscordThemerLogger(logPrefix, debugMode, logDisplayingInfo, logDisplayingWarnings, logDisplayingErrors));

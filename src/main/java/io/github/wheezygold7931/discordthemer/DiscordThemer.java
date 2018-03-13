@@ -24,6 +24,9 @@ public class DiscordThemer extends ListenerAdapter {
 
     private HashMap<String, ThemeToken> themeMap = new HashMap<>();
 
+    /**
+     * Protected Constructor to be used internally only.
+     */
     protected DiscordThemer(JDA jda, Guild guild, File themeDir, ActionMode actionMode, DiscordThemerLogger discordThemerLogger) {
         this.jda = jda;
         this.guild = guild;
@@ -34,6 +37,9 @@ public class DiscordThemer extends ListenerAdapter {
         processThemes();
     }
 
+    /**
+     * Runs through processing all the files in the theme directory.
+     */
     private void processThemes() {
         File[] rawThemes = themeDir.listFiles();
 
@@ -181,13 +187,23 @@ public class DiscordThemer extends ListenerAdapter {
 
     }
 
+    /**
+     * Checks if a theme is in the themeMap
+     * @param themeName The theme name in question.
+     * @return Returns true if the theme is in the themeMap.
+     */
     public boolean isValidTheme(String themeName) {
         return themeMap.containsKey(themeName);
     }
 
+    /**
+     * Sets the theme for your guild.
+     * @param themeName The theme name to use.
+     * @throws ThemeNotFoundException Throws {@link ThemeNotFoundException} when theme is invalid. Use {@link DiscordThemer#isValidTheme(String)} to avoid this.
+     */
     public void setServerTheme(String themeName) throws ThemeNotFoundException {
         if (!themeMap.containsKey(themeName)) {
-            throw new ThemeNotFoundException("Invalid or Unparsed Theme-File: " + themeName + "!");
+            throw new ThemeNotFoundException("Invalid or Un-parsed Theme-File: " + themeName + "!");
         }
 
         ThemeToken token = themeMap.get(themeName);
@@ -205,7 +221,7 @@ public class DiscordThemer extends ListenerAdapter {
             for (HashMap.Entry<String, String> entry : token.getThemeRoleData().entrySet()) {
                 new RunRestAction(guild.getRoleById(entry.getKey()).getManager().setName(entry.getValue()), actionMode);
             }
-            logger.info("Server's Theme has been Updated!");
+            logger.info("The server theme has been updated!");
         }
 
     }

@@ -47,6 +47,8 @@ public class Bot {
 To view the complete usage for DiscordThemerBuilder please check out the [wiki](https://github.com/WheezyGold7931/discord-themer/wiki) for the full usage.
 
 # Theme File Format
+Theme files are text files with the file extension ".dat". Any icon files you use must be valid png images as well.
+
 For each line, the parser splits the current theme file into a string array split at the ':' character. Each one of these splits are called a line token.
 
 Speaking of data, at the moment, theme files can store two different *kinds* of data: MetaData & Role Data.
@@ -75,6 +77,7 @@ Here is a visual of how a theme file looks:
 ```
 //This is a comment so this line will not be parsed by the parser!
 //Lines that start with / or # will be considered comments!
+//Note: Only full line comments are supported.
 //The parser will also ignore blank lines!
 
 //Metadata
