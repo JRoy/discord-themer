@@ -69,7 +69,7 @@ public class DiscordThemerBuilder {
      * Sets the prefix for any console output.
      * @param prefix The new prefix
      */
-    private DiscordThemerBuilder setLogPrefix(String prefix) {
+    public DiscordThemerBuilder setLogPrefix(String prefix) {
         this.logPrefix = prefix;
         return this;
     }
