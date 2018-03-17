@@ -92,3 +92,12 @@ r0leid:New Role Name
 r0leid:New Role Name
 r0leid:New Role Name
 ```
+
+# Donate
+If you would like to donate to me because you find what I do useful and would like to support me, you can do so through this methods:
+
+Patreon: https://www.patreon.com/JRoy
+
+PayPal.me: https://www.paypal.me/JoshuaRoy1
+
+Bitcoin: `32J2AqJBDY1VLq6wfZcLrTYS8fCcHHVDKD`
