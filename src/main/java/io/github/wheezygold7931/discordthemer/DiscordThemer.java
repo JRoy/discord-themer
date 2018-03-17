@@ -6,11 +6,17 @@ import io.github.wheezygold7931.discordthemer.util.RunRestAction;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Icon;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -188,6 +194,78 @@ public class DiscordThemer extends ListenerAdapter {
     }
 
     /**
+     * Gets the current state of the discord server and export it as a theme file.
+     * @param name The name you want the exported theme file.
+     * @param parse If the exported theme should be parsed and added to the theme map.
+     * @throws IllegalArgumentException Throws if file with name exists.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void captureServer(String name, boolean parse) throws IllegalArgumentException {
+        logger.info("Exporting current server state...");
+        File file = new File(themeDir.getPath() + "\\" + name + ".dat");
+        try {
+            if (file.exists())
+                throw new IllegalArgumentException("Theme file already exists!");
+            file.createNewFile();
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            writer.println("//Theme Auto-Exported from DiscordThemer#captureServer");
+
+            //Theme Display Name
+            writer.println("MetaData:name:" + name + " (Auto-Exported)");
+
+            //Guild Name
+            writer.println("MetaData:title:" + guild.getName());
+
+            //Convert image to png
+            logger.debug("Starting PNG Conversion...");
+
+            URLConnection connection = new URL(guild.getIconUrl()).openConnection();
+            connection.setRequestProperty("User-Agent", "Discord-Themer");
+            connection.connect();
+            BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
+            ImageIO.write(bufferedImage, "png", new File(themeDir.getPath() + "\\" + name + ".png"));
+            logger.debug("PNG Conversion Done!");
+
+            //Guild Icon
+            writer.println("MetaData:icon:" + name);
+
+            //Bot Nickname
+            writer.println("MetaData:nickname:" + guild.getMemberById(jda.getSelfUser().getId()).getNickname());
+
+            //Break from MetaData
+            writer.println();
+            writer.println("//Server Roles");
+
+            //Role Loop
+            for (Role role : guild.getRoles()) {
+                //Ignore the everyone role & managed roles
+                if (role.isPublicRole() || role.isManaged())
+                    continue;
+                writer.println(role.getId() + ":" + role.getName());
+            }
+
+            //We are done here, let's wrap up!
+            writer.close();
+            logger.info("Current state of server has been exported into a theme file!");
+
+            //Deal with parser!
+            if (parse) {
+                if (validateTheme(file)) {
+                    parseTheme(file);
+                    logger.info("Theme File Parsed: " + name + ".dat");
+                } else {
+                    logger.error("Somehow, we made a perfect theme file and we don't understand it!");
+                }
+            }
+
+        } catch (IOException e) {
+            logger.error("Error while taking a server snapshot:");
+            e.printStackTrace();
+            logger.error("Please report this on GitHub!");
+        }
+    }
+
+    /**
      * Checks if a theme is in the themeMap
      * @param themeName The theme name in question.
      * @return Returns true if the theme is in the themeMap.
@@ -219,7 +297,12 @@ public class DiscordThemer extends ListenerAdapter {
             new RunRestAction(guild.getManager().setName(token.getServerTitle()), actionMode);
             new RunRestAction(guild.getController().setNickname(guild.getMemberById(jda.getSelfUser().getId()), token.getBotNickname()), actionMode);
             for (HashMap.Entry<String, String> entry : token.getThemeRoleData().entrySet()) {
-                new RunRestAction(guild.getRoleById(entry.getKey()).getManager().setName(entry.getValue()), actionMode);
+                Role crole = guild.getRoleById(entry.getKey());
+                if (guild.getMemberById(jda.getSelfUser().getId()).canInteract(crole)) {
+                    new RunRestAction(crole.getManager().setName(entry.getValue()), actionMode);
+                } else {
+                    logger.warn("Cannot Interact with Role ID: " + crole.getId() + "!");
+                }
             }
             logger.info("The server theme has been updated!");
         }
