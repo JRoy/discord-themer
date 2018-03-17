@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class DiscordThemer extends ListenerAdapter {
@@ -101,7 +103,7 @@ public class DiscordThemer extends ListenerAdapter {
         }
 
         HashMap<String, String> metaTokens = new HashMap<>();
-        int roleCount = 0;
+        List<String> roleIds = new ArrayList<>();
         while (validateScanner.hasNextLine()) {
             String curLine = validateScanner.nextLine();
 
@@ -127,11 +129,12 @@ public class DiscordThemer extends ListenerAdapter {
                     logger.warn("Invalid Role ID: " + lineTokens[0] + "! This will not be parsed.");
                     continue;
                 }
-                roleCount++;
+                if (roleIds.contains(lineTokens[0])) logger.warn("Role ID Duplication Detected! Please only use a role once within a theme file!");
+                roleIds.add(lineTokens[0]);
             }
         }
 
-        if (roleCount==0) logger.warn("There were no valid roles detected! The server will only be themed with MetaData.");
+        if (roleIds.size()==0) logger.warn("There were no valid roles detected! The server will only be themed with MetaData.");
 
         if (metaTokens.containsKey("title") && metaTokens.containsKey("icon") && metaTokens.containsKey("nickname") && metaTokens.containsKey("name")) {
             File image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
