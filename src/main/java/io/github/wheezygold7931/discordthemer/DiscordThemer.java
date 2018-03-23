@@ -1,6 +1,7 @@
 package io.github.wheezygold7931.discordthemer;
 
 import io.github.wheezygold7931.discordthemer.exceptions.ThemeNotFoundException;
+import io.github.wheezygold7931.discordthemer.util.ActionMode;
 import io.github.wheezygold7931.discordthemer.util.DiscordThemerLogger;
 import io.github.wheezygold7931.discordthemer.util.ParserVersion;
 import io.github.wheezygold7931.discordthemer.util.RunRestAction;

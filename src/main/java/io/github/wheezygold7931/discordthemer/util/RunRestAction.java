@@ -1,6 +1,5 @@
 package io.github.wheezygold7931.discordthemer.util;
 
-import io.github.wheezygold7931.discordthemer.ActionMode;
 import net.dv8tion.jda.core.requests.RestAction;
 
 public class RunRestAction {
