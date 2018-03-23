@@ -37,6 +37,26 @@ public class DiscordThemerLogger {
             log("[DEBUG] " + debugString);
     }
 
+    public void pinfo(String infoString, String themeName) {
+        if (isDisplayingInfo)
+            log("[INFO] [PARSER] [" + themeName + "] " + infoString);
+    }
+
+    public void pwarn(String warnString, String themeName) {
+        if (isDisplayingWarnings)
+            log("[WARN] [PARSER] [" + themeName + "] " + warnString);
+    }
+
+    public void perror(String errorString, String themeName) {
+        if (isDisplayingErrors)
+            log("[ERROR] [PARSER] [" + themeName + "] " + errorString);
+    }
+
+    public void pdebug(String debugString, String themeName) {
+        if (isDebug)
+            log("[DEBUG] [PARSER] [" + themeName + "] " + debugString);
+    }
+
     private void log(String log) {
         System.out.println(prefix + " " + log);
     }

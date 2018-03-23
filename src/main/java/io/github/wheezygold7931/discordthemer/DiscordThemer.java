@@ -2,6 +2,7 @@ package io.github.wheezygold7931.discordthemer;
 
 import io.github.wheezygold7931.discordthemer.exceptions.ThemeNotFoundException;
 import io.github.wheezygold7931.discordthemer.util.DiscordThemerLogger;
+import io.github.wheezygold7931.discordthemer.util.ParserVersion;
 import io.github.wheezygold7931.discordthemer.util.RunRestAction;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+@SuppressWarnings("WeakerAccess")
 public class DiscordThemer extends ListenerAdapter {
 
     private final JDA jda;
@@ -71,11 +73,11 @@ public class DiscordThemer extends ListenerAdapter {
             }
         }
 
-        logger.info("All themes have been loaded and parsed!");
+        logger.info("Loaded and Parsed a total of " + String.valueOf(themeMap.size()) + " themes!");
         logger.debug("Loaded Themes:");
         for (HashMap.Entry<String, ThemeToken> entry : themeMap.entrySet()) {
             ThemeToken token = entry.getValue();
-            logger.debug("    - " + token.getThemeName() + " (" + token.getThemeDisplayName() + ")");
+            logger.debug("    - " + token.getThemeName() + " (" + token.getThemeDisplayName() + ") (Parser: " + token.getParserVersion().getVersionString() + ")");
         }
     }
 
@@ -91,14 +93,11 @@ public class DiscordThemer extends ListenerAdapter {
         String fileName = file.getName(); //Has file extension
         String filePath = file.getPath();
 
-        logger.debug("Validating Theme " + fileName);
-        logger.debug("File Path for " + fileName + " is " + filePath);
-
         Scanner validateScanner;
         try {
             validateScanner = new Scanner(file);
         } catch (FileNotFoundException e) {
-            logger.error("File Mismatch! Did the GC steal the file?");
+            logger.perror("File Mismatch! Did the GC steal the file?", fileName);
             return false;
         }
 
@@ -116,38 +115,44 @@ public class DiscordThemer extends ListenerAdapter {
             String[] lineTokens = curLine.split("[:]");
             if (lineTokens[0].equalsIgnoreCase("MetaData")) {
                 if (lineTokens.length != 3) {
-                    logger.error("Unparseable line in \"" + fileName + "\": " + curLine);
+                    logger.perror("Unparseable line: " + curLine, fileName);
                     return false;
                 }
                 metaTokens.put(lineTokens[1], lineTokens[2]);
             } else {
                 if (lineTokens.length != 2) {
-                    logger.error("Unparseable line in \"" + fileName + "\": " + curLine);
+                    logger.perror("Unparseable line: " + curLine, fileName);
                     return false;
                 }
                 if (guild.getRoleById(lineTokens[0]) == null) {
-                    logger.warn("Invalid Role ID: " + lineTokens[0] + "! This will not be parsed.");
+                    logger.pwarn("Invalid Role ID: " + lineTokens[0] + "! This will not be parsed.", fileName);
                     continue;
                 }
-                if (roleIds.contains(lineTokens[0])) logger.warn("Role ID Duplication Detected! Please only use a role once within a theme file!");
+                if (roleIds.contains(lineTokens[0])) logger.pwarn("Role ID Duplication Detected! Please only use a role once within a theme file!", fileName);
                 roleIds.add(lineTokens[0]);
             }
         }
 
-        if (roleIds.size()==0) logger.warn("There were no valid roles detected! The server will only be themed with MetaData.");
+        if (roleIds.size()==0) logger.pwarn("There were no valid roles detected! The server will only be themed with MetaData.", fileName);
+
+        if (!metaTokens.containsKey("parser")) {
+            logger.pwarn("Parser Version MetaData no provided, using newest parser.", fileName);
+        } else {
+            if (!ParserVersion.isVersion(metaTokens.get("parser"))) logger.pwarn("Invalid Parser Version! The parser version will be defaulted to the newest one!", fileName);
+        }
 
         if (metaTokens.containsKey("title") && metaTokens.containsKey("icon") && metaTokens.containsKey("nickname") && metaTokens.containsKey("name")) {
             File image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
 
             if (!image.exists() || image.isDirectory()) {
-                logger.error("Invalid Image File: " + metaTokens.get("icon") + ".png");
-                logger.error(" ^ If you were trying to specify another directory, start the metadata value with a slash!");
+                logger.perror("Invalid Image File: " + metaTokens.get("icon") + ".png", fileName);
+                logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
                 return false;
             }
             return true;
         }
 
-        logger.error("Too little MetaData! Did you use them all?");
+        logger.perror("Too little MetaData! Did you use them all?", fileName);
         return false;
     }
 
@@ -157,9 +162,10 @@ public class DiscordThemer extends ListenerAdapter {
      * @param file The theme file to be parsed.
      */
     private void parseTheme(File file) {
+        String fileName = file.getName();
         String themeName = file.getName().substring(0, file.getName().lastIndexOf('.')); //Remove the file extension from the file
 
-        logger.debug("Parsing Theme " + file.getName() + "!");
+        logger.pdebug("Parsing Theme " + file.getName() + "!", fileName);
 
         ThemeToken token = new ThemeToken(themeName);
 
@@ -167,7 +173,7 @@ public class DiscordThemer extends ListenerAdapter {
         try {
             dataScanner = new Scanner(file);
         } catch (FileNotFoundException e) {
-            logger.error("File Mismatch! Did the GC steal the file?");
+            logger.perror("File Mismatch! Did the GC steal the file?", fileName);
             return;
         }
 
@@ -185,7 +191,7 @@ public class DiscordThemer extends ListenerAdapter {
                 token.addMetaData(lineTokens[1], lineTokens[2]);
             } else {
                 if (guild.getRoleById(lineTokens[0]) == null) {
-                    logger.error("Unparseable Role: " + curLine + " (Invalid Role ID)");
+                    logger.perror("Unparseable Role: " + curLine + " (Invalid Role ID)", fileName);
                     continue; //Invalid role ids will cause exceptions from JDA.
                 }
                 token.addData(lineTokens[0], lineTokens[1]);
@@ -234,6 +240,9 @@ public class DiscordThemer extends ListenerAdapter {
 
             //Bot Nickname
             writer.println("MetaData:nickname:" + guild.getMemberById(jda.getSelfUser().getId()).getNickname());
+
+            //Parser Version
+            writer.println("MetaData:parser:" + ParserVersion.currentVersion.getVersionString());
 
             //Break from MetaData
             writer.println();

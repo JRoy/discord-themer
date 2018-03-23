@@ -9,6 +9,7 @@ import java.io.File;
 /**
  * The builder for a Discord-Themer instance.
  */
+@SuppressWarnings("WeakerAccess")
 public class DiscordThemerBuilder {
 
     private final JDA jda;

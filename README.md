@@ -27,7 +27,7 @@ public class Bot {
 
     private static DiscordThemer discordThemer;
 
-    public static void main(String[] args) throws LoginException, InterruptedException {
+    public static void main(String[] args) throws LoginException {
 
         JDA jda = new JDABuilder(AccountType.BOT)
                 .setToken("TOKEN")
@@ -63,9 +63,11 @@ Now, in the actual theme file, you'll want to replace the "META_VALUE" with the 
 
 > title - The title you want the guild to have for the target theme (The name of the server).
 
-> icon - The file name of the png file you'd like as your server icon.
+> icon - The file name of the png file you'd like as your server icon. (Do not include the .png)
 
 > nickname - The nickname of the bot.
+
+> parser - The version of the parser the theme should use. This should be set to 1 as there is only one parser version for now.
 
 While it is completely optional, you can choose to theme roles using the following format:
 
@@ -85,6 +87,7 @@ MetaData:name:Theme Display Name
 MetaData:title:Guild Title
 MetaData:icon:Icon_File_Name
 MetaData:nickname:Bot Nickname
+MetaData:parser:1
 
 //Role Data
 r0leid:New Role Name

@@ -1,7 +1,10 @@
 package io.github.wheezygold7931.discordthemer;
 
+import io.github.wheezygold7931.discordthemer.util.ParserVersion;
+
 import java.util.HashMap;
 
+@SuppressWarnings("WeakerAccess")
 public class ThemeToken {
 
     private final String themeName;
@@ -17,6 +20,7 @@ public class ThemeToken {
     private String serverTitle;
     private String serverIconName;
     private String botNickname;
+    private ParserVersion parserVersion;
 
     /**
      * @param themeName The internal theme name. This is also the file name and what will be used to switch themes.
@@ -38,6 +42,7 @@ public class ThemeToken {
         serverTitle = themeMetaData.get("title");
         serverIconName = themeMetaData.get("icon");
         botNickname = themeMetaData.get("nickname");
+        parserVersion = ParserVersion.getFromVersionString(themeMetaData.get("parser"));
         return this;
     }
 
@@ -63,5 +68,9 @@ public class ThemeToken {
 
     public String getBotNickname() {
         return botNickname;
+    }
+
+    public ParserVersion getParserVersion() {
+        return parserVersion;
     }
 }
