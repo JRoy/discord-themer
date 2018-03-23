@@ -1,4 +1,4 @@
-# discord-themer [![Build Status](https://travis-ci.org/WheezyGold7931/discord-themer.svg?branch=master)](https://travis-ci.org/WheezyGold7931/discord-themer) [![Release](https://jitpack.io/v/WheezyGold7931/discord-themer.svg)](https://jitpack.io/#WheezyGold7931/discord-themer) 
+# discord-themer [![Build Status](https://travis-ci.org/JRoy/discord-themer.svg?branch=master)](https://travis-ci.org/JRoy/discord-themer) [![Release](https://jitpack.io/v/JRoy/discord-themer.svg)](https://jitpack.io/#JRoy/discord-themer) 
 An easy-to-use theme API (Written in Java using [DV8](https://github.com/DV8FromTheWorld)'s [JDA](https://github.com/DV8FromTheWorld/JDA) Discord Wrapper) that allows you to modify multiple aspects of your Discord Server using simple a simple file-based system.
 
 # Getting Started
@@ -7,17 +7,17 @@ You will need to add this project as a dependency in a dependency manager of you
 To link to gradle:
 ```groovy
 dependencies {
-    compile 'com.github.WheezyGold7931:discord-themer:1.0'
+    compile 'com.github.JRoy:discord-themer:1.0'
 }
 
 repositories {
     maven { url 'https://jitpack.io' }
 }
 ```
-To use Maven, SBT, or Leiningen check out [JitPack's](https://jitpack.io/#WheezyGold7931/discord-themer) site for your respective dependency manger.
+To use Maven, SBT, or Leiningen check out [JitPack's](https://jitpack.io/#JRoy/discord-themer) site for your respective dependency manger.
 
 # Usage
-To create an instance of Discord-Themer, you must go configure the builder [DiscordThemerBuilder](https://github.com/WheezyGold7931/discord-themer/blob/master/src/main/java/io/github/wheezygold7931/discordthemer/DiscordThemerBuilder.java) and run DiscordThemerBuilder#build() to get a [DiscordThemer](https://github.com/WheezyGold7931/discord-themer/blob/master/src/main/java/io/github/wheezygold7931/discordthemer/DiscordThemer.java) object which will actually do the work/process the themes.
+To create an instance of Discord-Themer, you must go configure the builder [DiscordThemerBuilder](https://github.com/JRoy/discord-themer/blob/master/src/main/java/io/github/wheezygold7931/discordthemer/DiscordThemerBuilder.java) and run DiscordThemerBuilder#build() to get a [DiscordThemer](https://github.com/JRoy/discord-themer/blob/master/src/main/java/io/github/wheezygold7931/discordthemer/DiscordThemer.java) object which will actually do the work/process the themes.
 
 The builder/themer needs to be registered **AFTER** your JDA instance has been loaded as it needs to take in the JDA variable. As this is the case I *strongly* recommend using JDABuilder#buildBlocking() when creating your JDA instance so your JDA object is not null when passing it into the ThemerBuilder (it will throw a IllegalArgumentException if that is the case).
 
@@ -44,7 +44,7 @@ public class Bot {
     }
 }
 ```
-To view the complete usage for DiscordThemerBuilder please check out the [wiki](https://github.com/WheezyGold7931/discord-themer/wiki) for the full usage.
+To view the complete usage for DiscordThemerBuilder please check out the [wiki](https://github.com/JRoy/discord-themer/wiki) for the full usage.
 
 # Theme File Format
 Theme files are text files with the file extension ".dat". Any icon files you use must be valid png images as well.
