@@ -16,6 +16,8 @@ public class RunRestAction {
                 break;
             }
             default:
+                //I guess we default to queue /shrug
+                restAction.queue();
                 break;
         }
     }
