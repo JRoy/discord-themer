@@ -7,7 +7,7 @@ You will need to add this project as a dependency in a dependency manager of you
 To link to gradle:
 ```groovy
 dependencies {
-    compile 'com.github.JRoy:discord-themer:1.1'
+    compile 'com.github.JRoy:discord-themer:1.2'
 }
 
 repositories {
@@ -61,11 +61,13 @@ Now, in the actual theme file, you'll want to replace the "META_VALUE" with the 
 
 > name - The display name of the theme (Not the theme id that you will use in the code; That's the file name...).
 
-> title - The title you want the guild to have for the target theme (The name of the server).
+> title - (Optional) - The title you want the guild to have for the target theme (The name of the server).
 
-> icon - The file name of the png file you'd like as your server icon. (Do not include the .png)
+> icon - (Optional) - The file name of the png file you'd like as your server icon. (Do not include the .png)
 
-> nickname - The nickname of the bot.
+> avatar - (Optional) - The file name of the png file you'd like as your bot's avatar. (Do not include the .png)
+
+> nickname - (Optional) - The nickname of the bot.
 
 > parser - The version of the parser the theme should use. This should be set to 1 as there is only one parser version for now.
 
@@ -86,6 +88,7 @@ Here is a visual of how a theme file looks:
 MetaData:name:Theme Display Name
 MetaData:title:Guild Title
 MetaData:icon:Icon_File_Name
+MetaData:avatar:Avatar_File_Name
 MetaData:nickname:Bot Nickname
 MetaData:parser:1
 
