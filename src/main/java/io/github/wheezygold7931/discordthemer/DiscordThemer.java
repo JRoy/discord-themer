@@ -137,33 +137,36 @@ public class DiscordThemer extends ListenerAdapter {
 
         if (roleIds.size()==0) logger.pwarn("There were no valid roles detected! The server will only be themed with MetaData.", fileName);
 
+        if (!metaTokens.containsKey("name")) {
+            logger.perror("Theme name not provided in metadata!", fileName);
+            return false;
+        }
+
         if (!metaTokens.containsKey("parser")) {
             logger.pwarn("Parser Version MetaData no provided, using newest parser.", fileName);
         } else {
             if (!ParserVersion.isVersion(metaTokens.get("parser"))) logger.pwarn("Invalid Parser Version! The parser version will be defaulted to the newest one!", fileName);
         }
 
-        if (metaTokens.containsKey("title") && metaTokens.containsKey("icon") && metaTokens.containsKey("avatar") && metaTokens.containsKey("nickname") && metaTokens.containsKey("name")) {
+        if (metaTokens.containsKey("icon")) {
             File image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
-            File avatar = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("avatar") + ".png");
-
             if (!image.exists() || image.isDirectory()) {
                 logger.perror("Invalid Server Image File: " + metaTokens.get("icon") + ".png", fileName);
                 logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
                 return false;
             }
+        }
 
+        if (metaTokens.containsKey("avatar")) {
+            File avatar = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("avatar") + ".png");
             if (!avatar.exists() || avatar.isDirectory()) {
                 logger.perror("Invalid Avatar Image File: " + metaTokens.get("icon") + ".png", fileName);
                 logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
                 return false;
             }
-
-            return true;
         }
-
-        logger.perror("Too little MetaData! Did you use them all?", fileName);
-        return false;
+        logger.pdebug("Theme Validated!", fileName);
+        return true;
     }
 
     /**
@@ -325,15 +328,17 @@ public class DiscordThemer extends ListenerAdapter {
         logger.info("Switching to Theme: " + token.getThemeDisplayName());
 
         try {
-            new RunRestAction(guild.getManager().setIcon(Icon.from(new File(themeDir.getPath() + "\\" + token.getServerIconName() + ".png"))), actionMode);
-            new RunRestAction(jda.getSelfUser().getManager().setAvatar(Icon.from(new File(themeDir.getPath() + "\\" + token.getBotIconName() + ".png"))), actionMode);
+            if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER) && token.getServerIconName() != null)
+                new RunRestAction(guild.getManager().setIcon(Icon.from(new File(themeDir.getPath() + "\\" + token.getServerIconName() + ".png"))), actionMode);
+            if (token.getBotIconName() != null)
+                new RunRestAction(jda.getSelfUser().getManager().setAvatar(Icon.from(new File(themeDir.getPath() + "\\" + token.getBotIconName() + ".png"))), actionMode);
         } catch (IOException e) {
             logger.error("Your server icon or avatar file(s) are invalid or have been deleted/modified since the last parsing.");
             e.printStackTrace();
         } finally {
-            if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER))
+            if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER) && token.getServerTitle() != null)
                 new RunRestAction(guild.getManager().setName(token.getServerTitle()), actionMode);
-            if (guild.getSelfMember().hasPermission(Permission.NICKNAME_CHANGE))
+            if (guild.getSelfMember().hasPermission(Permission.NICKNAME_CHANGE) && token.getBotNickname() != null)
                 new RunRestAction(guild.getController().setNickname(guild.getMemberById(jda.getSelfUser().getId()), token.getBotNickname()), actionMode);
             for (HashMap.Entry<String, String> entry : token.getThemeRoleData().entrySet()) {
                 Role crole = guild.getRoleById(entry.getKey());

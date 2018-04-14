@@ -2,6 +2,8 @@ package io.github.wheezygold7931.discordthemer;
 
 import io.github.wheezygold7931.discordthemer.util.ParserVersion;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 
 @SuppressWarnings("WeakerAccess")
@@ -17,9 +19,13 @@ public class ThemeToken {
     private HashMap<String, String> themeMetaData = new HashMap<>();
 
     private String themeDisplayName;
+    @Nullable
     private String serverTitle;
+    @Nullable
     private String serverIconName;
+    @Nullable
     private String botNickname;
+    @Nullable
     private String botIconName;
     private ParserVersion parserVersion;
 
@@ -60,18 +66,22 @@ public class ThemeToken {
         return themeDisplayName;
     }
 
+    @CheckForNull
     public String getServerTitle() {
         return serverTitle;
     }
 
+    @CheckForNull
     public String getServerIconName() {
         return serverIconName;
     }
 
+    @CheckForNull
     public String getBotNickname() {
         return botNickname;
     }
 
+    @CheckForNull
     public String getBotIconName() {
         return botIconName;
     }
