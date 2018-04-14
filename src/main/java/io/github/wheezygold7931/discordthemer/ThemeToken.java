@@ -20,6 +20,7 @@ public class ThemeToken {
     private String serverTitle;
     private String serverIconName;
     private String botNickname;
+    private String botIconName;
     private ParserVersion parserVersion;
 
     /**
@@ -42,6 +43,7 @@ public class ThemeToken {
         serverTitle = themeMetaData.get("title");
         serverIconName = themeMetaData.get("icon");
         botNickname = themeMetaData.get("nickname");
+        botIconName = themeMetaData.get("avatar");
         parserVersion = ParserVersion.getFromVersionString(themeMetaData.get("parser"));
         return this;
     }
@@ -68,6 +70,10 @@ public class ThemeToken {
 
     public String getBotNickname() {
         return botNickname;
+    }
+
+    public String getBotIconName() {
+        return botIconName;
     }
 
     public ParserVersion getParserVersion() {

@@ -6,6 +6,7 @@ import io.github.wheezygold7931.discordthemer.util.DiscordThemerLogger;
 import io.github.wheezygold7931.discordthemer.util.ParserVersion;
 import io.github.wheezygold7931.discordthemer.util.RunRestAction;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Icon;
 import net.dv8tion.jda.core.entities.Role;
@@ -142,14 +143,22 @@ public class DiscordThemer extends ListenerAdapter {
             if (!ParserVersion.isVersion(metaTokens.get("parser"))) logger.pwarn("Invalid Parser Version! The parser version will be defaulted to the newest one!", fileName);
         }
 
-        if (metaTokens.containsKey("title") && metaTokens.containsKey("icon") && metaTokens.containsKey("nickname") && metaTokens.containsKey("name")) {
+        if (metaTokens.containsKey("title") && metaTokens.containsKey("icon") && metaTokens.containsKey("avatar") && metaTokens.containsKey("nickname") && metaTokens.containsKey("name")) {
             File image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
+            File avatar = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("avatar") + ".png");
 
             if (!image.exists() || image.isDirectory()) {
-                logger.perror("Invalid Image File: " + metaTokens.get("icon") + ".png", fileName);
+                logger.perror("Invalid Server Image File: " + metaTokens.get("icon") + ".png", fileName);
                 logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
                 return false;
             }
+
+            if (!avatar.exists() || avatar.isDirectory()) {
+                logger.perror("Invalid Avatar Image File: " + metaTokens.get("icon") + ".png", fileName);
+                logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
+                return false;
+            }
+
             return true;
         }
 
@@ -159,8 +168,8 @@ public class DiscordThemer extends ListenerAdapter {
 
     /**
      * The parser reads a theme file from the theme validator and parses it into a {@link ThemeToken}
-     * (Note: The parser is extremely stupid, the validator is where the smarts are at. I cannot stress this enough if you're modifying this, run your files through {@link DiscordThemer#validateTheme(File)} FIRST! This method WILL hard fail!)
-     * @param file The theme file to be parsed.
+     * Note: The parser is extremely stupid, the validator is where the smarts are at. I cannot stress this enough if you're modifying this, run your files through {@link DiscordThemer#validateTheme(File)} FIRST! This method WILL hard fail!
+     * @param file The (pre-validated) theme file to be parsed.
      */
     private void parseTheme(File file) {
         String fileName = file.getName();
@@ -227,17 +236,31 @@ public class DiscordThemer extends ListenerAdapter {
             writer.println("MetaData:title:" + guild.getName());
 
             //Convert image to png
-            logger.debug("Starting PNG Conversion...");
+            logger.debug("Starting Server Icon PNG Conversion...");
 
-            URLConnection connection = new URL(guild.getIconUrl()).openConnection();
-            connection.setRequestProperty("User-Agent", "Discord-Themer");
-            connection.connect();
-            BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
-            ImageIO.write(bufferedImage, "png", new File(themeDir.getPath() + "\\" + name + ".png"));
-            logger.debug("PNG Conversion Done!");
+            URLConnection iconconnection = new URL(guild.getIconUrl()).openConnection();
+            //Discord throws a 500 Error when User-Agents are not supplied
+            iconconnection.setRequestProperty("User-Agent", "Discord-Themer");
+            iconconnection.connect();
+            BufferedImage ibufferedImage = ImageIO.read(iconconnection.getInputStream());
+            ImageIO.write(ibufferedImage, "png", new File(themeDir.getPath() + "\\" + name + ".png"));
+            logger.debug("Server Icon PNG Conversion Done!");
 
             //Guild Icon
             writer.println("MetaData:icon:" + name);
+
+            logger.debug("Starting Avatar PNG Conversion...");
+
+            URLConnection avatarconnection = new URL(jda.getSelfUser().getAvatarUrl()).openConnection();
+            //Discord throws a 500 Error when User-Agents are not supplied
+            avatarconnection.setRequestProperty("User-Agent", "Discord-Themer");
+            avatarconnection.connect();
+            BufferedImage abufferedImage = ImageIO.read(avatarconnection.getInputStream());
+            ImageIO.write(abufferedImage, "png", new File(themeDir.getPath() + "\\avatar" + name + ".png"));
+            logger.debug("Avatar PNG Conversion Done!");
+
+            //Bot Avatar
+            writer.println("MetaData:avatar:avatar" + name);
 
             //Bot Nickname
             writer.println("MetaData:nickname:" + guild.getMemberById(jda.getSelfUser().getId()).getNickname());
@@ -267,7 +290,7 @@ public class DiscordThemer extends ListenerAdapter {
                     parseTheme(file);
                     logger.info("Theme File Parsed: " + name + ".dat");
                 } else {
-                    logger.error("Somehow, we made a perfect theme file and we don't understand it!");
+                    logger.error("Somehow, we made a perfect theme file and we don't understand it! Please report this on GitHub!");
                 }
             }
 
@@ -303,15 +326,18 @@ public class DiscordThemer extends ListenerAdapter {
 
         try {
             new RunRestAction(guild.getManager().setIcon(Icon.from(new File(themeDir.getPath() + "\\" + token.getServerIconName() + ".png"))), actionMode);
+            new RunRestAction(jda.getSelfUser().getManager().setAvatar(Icon.from(new File(themeDir.getPath() + "\\" + token.getBotIconName() + ".png"))), actionMode);
         } catch (IOException e) {
-            logger.error("Your icon file is invalid!");
+            logger.error("Your server icon or avatar file(s) are invalid or have been deleted/modified since the last parsing.");
             e.printStackTrace();
         } finally {
-            new RunRestAction(guild.getManager().setName(token.getServerTitle()), actionMode);
-            new RunRestAction(guild.getController().setNickname(guild.getMemberById(jda.getSelfUser().getId()), token.getBotNickname()), actionMode);
+            if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER))
+                new RunRestAction(guild.getManager().setName(token.getServerTitle()), actionMode);
+            if (guild.getSelfMember().hasPermission(Permission.NICKNAME_CHANGE))
+                new RunRestAction(guild.getController().setNickname(guild.getMemberById(jda.getSelfUser().getId()), token.getBotNickname()), actionMode);
             for (HashMap.Entry<String, String> entry : token.getThemeRoleData().entrySet()) {
                 Role crole = guild.getRoleById(entry.getKey());
-                if (guild.getMemberById(jda.getSelfUser().getId()).canInteract(crole)) {
+                if (guild.getSelfMember().canInteract(crole) && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
                     new RunRestAction(crole.getManager().setName(entry.getValue()), actionMode);
                 } else {
                     logger.warn("Cannot Interact with Role ID: " + crole.getId() + ", Skipping!");
