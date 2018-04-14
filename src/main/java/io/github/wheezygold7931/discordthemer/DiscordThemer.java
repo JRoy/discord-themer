@@ -68,7 +68,7 @@ public class DiscordThemer extends ListenerAdapter {
                     if (validateTheme(theme)) {
                         parseTheme(theme);
                     } else {
-                        logger.debug("Theme exited validator with an invalid status!");
+                        logger.pdebug("Theme failed validation!", theme.getName());
                     }
                 }
             }
@@ -314,7 +314,7 @@ public class DiscordThemer extends ListenerAdapter {
                 if (guild.getMemberById(jda.getSelfUser().getId()).canInteract(crole)) {
                     new RunRestAction(crole.getManager().setName(entry.getValue()), actionMode);
                 } else {
-                    logger.warn("Cannot Interact with Role ID: " + crole.getId() + "!");
+                    logger.warn("Cannot Interact with Role ID: " + crole.getId() + ", Skipping!");
                 }
             }
             logger.info("The server theme has been updated!");
