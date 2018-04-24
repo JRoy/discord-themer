@@ -1,4 +1,4 @@
-# discord-themer [![Build Status](https://travis-ci.org/JRoy/discord-themer.svg?branch=master)](https://travis-ci.org/JRoy/discord-themer) [![Release](https://jitpack.io/v/JRoy/discord-themer.svg)](https://jitpack.io/#JRoy/discord-themer) 
+# discord-themer [![Build Status](https://travis-ci.org/JRoy/discord-themer.svg?branch=master)](https://travis-ci.org/JRoy/discord-themer) [![Release](https://jitpack.io/v/JRoy/discord-themer.svg)](https://jitpack.io/#JRoy/discord-themer) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8ac7f1e788a3486f815f77a536a15d98)](https://www.codacy.com/app/WheezyGold7931/discord-themer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JRoy/discord-themer&amp;utm_campaign=Badge_Grade)
 An easy-to-use theme API (Written in Java using [DV8](https://github.com/DV8FromTheWorld)'s [JDA](https://github.com/DV8FromTheWorld/JDA) Discord Wrapper) that allows you to modify multiple aspects of your Discord Server using simple a simple file-based system.
 
 # Getting Started
@@ -7,7 +7,7 @@ You will need to add this project as a dependency in a dependency manager of you
 To link to gradle:
 ```groovy
 dependencies {
-    compile 'com.github.JRoy:discord-themer:1.2'
+    compile 'com.github.JRoy:discord-themer:1.3'
 }
 
 repositories {

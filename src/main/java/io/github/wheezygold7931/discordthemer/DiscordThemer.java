@@ -63,14 +63,12 @@ public class DiscordThemer extends ListenerAdapter {
         }
 
         for (File theme : rawThemes) {
-            if (!theme.isDirectory()) {
-                if (theme.getName().endsWith(".dat")) {
-                    logger.debug("Sending file to parser: " + theme.getName());
-                    if (validateTheme(theme)) {
-                        parseTheme(theme);
-                    } else {
-                        logger.pdebug("Theme failed validation!", theme.getName());
-                    }
+            if (!theme.isDirectory() && theme.getName().endsWith(".dat")) {
+                logger.debug("Sending file to parser: " + theme.getName());
+                if (validateTheme(theme)) {
+                    parseTheme(theme);
+                } else {
+                    logger.pdebug("Theme failed validation!", theme.getName());
                 }
             }
         }

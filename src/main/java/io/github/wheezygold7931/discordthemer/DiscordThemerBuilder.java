@@ -77,7 +77,6 @@ public class DiscordThemerBuilder {
             this.file = file;
             return this;
         }
-
         throw new IllegalArgumentException("Invalid Theme Directory");
     }
 
