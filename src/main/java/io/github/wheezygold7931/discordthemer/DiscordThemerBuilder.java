@@ -42,7 +42,15 @@ public class DiscordThemerBuilder {
      * @throws IllegalArgumentException Throws if the guild does not exist.
      */
     public DiscordThemerBuilder setGuild(String guildId) throws IllegalArgumentException {
-        Guild guild = jda.getGuildById(guildId);
+        return setGuild(jda.getGuildById(guildId));
+    }
+
+    /**
+     * Sets the guild for the themer.
+     * @param guild The guild to be themed.
+     * @throws IllegalArgumentException Throws if the guild does not exist/is null.
+     */
+    public DiscordThemerBuilder setGuild(Guild guild) throws IllegalArgumentException {
         if (guild != null) {
             this.guild = guild;
             return this;
@@ -50,15 +58,21 @@ public class DiscordThemerBuilder {
         throw new IllegalArgumentException("Invalid Guild-ID Provided (Cannot Be Found)");
     }
 
+    /**
+     * Sets the folder where your theme files are stored.
+     * @param filePath The path to the theme folder; Relative to your jar file by default.
+     * @throws IllegalArgumentException Throws when the path is invalid.
+     */
+    public DiscordThemerBuilder setThemeFolder(String filePath) throws IllegalArgumentException {
+        return setThemeFolder(new File(filePath));
+    }
 
     /**
      * Sets the folder where your theme files are stored.
-     * @param path The path to the theme folder; Relative to your jar file by default.
+     * @param file The directory of the theme folder.
      * @throws IllegalArgumentException Throws when the path is invalid.
      */
-    public DiscordThemerBuilder setThemeFolder(String path) throws IllegalArgumentException {
-        File file = new File(path);
-
+    public DiscordThemerBuilder setThemeFolder(File file) throws IllegalArgumentException {
         if (file.exists() && file.isDirectory()) {
             this.file = file;
             return this;
