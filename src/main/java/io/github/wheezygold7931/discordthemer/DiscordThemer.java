@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
 public class DiscordThemer {
@@ -308,6 +305,26 @@ public class DiscordThemer {
      */
     public boolean isValidTheme(String themeName) {
         return themeMap.containsKey(themeName);
+    }
+
+    /**
+
+     * @return List of all registered themes.
+     */
+    public List<String> getThemeList() {
+        return Arrays.asList((String[]) themeMap.keySet().toArray());
+    }
+
+    /**
+     * Gives {@link ThemeToken} associated with the provided theme name.
+     * @param themeName The theme name belonging to the token.
+     * @return Returns the theme token.
+     * @throws ThemeNotFoundException Throws {@link ThemeNotFoundException} when theme is invalid. Use {@link DiscordThemer#isValidTheme(String)} to avoid this.
+     */
+    public ThemeToken getThemeToken(String themeName) throws ThemeNotFoundException {
+        if (isValidTheme(themeName))
+            return themeMap.get(themeName);
+        throw new ThemeNotFoundException("Theme name is not registered!");
     }
 
     /**
