@@ -147,7 +147,7 @@ public class DiscordThemer {
             try {
                 image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
             } catch (StringIndexOutOfBoundsException e) {
-                image = new File(filePath + metaTokens.get("icon") + ".png");
+                image = new File(themeDir + metaTokens.get("icon") + ".png");
             }
 
             if (!image.exists() || image.isDirectory()) {
@@ -162,7 +162,7 @@ public class DiscordThemer {
             try {
                 avatar = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("avatar") + ".png");
             } catch (StringIndexOutOfBoundsException e) {
-                avatar = new File(filePath + metaTokens.get("avatar") + ".png");
+                avatar = new File(themeDir + metaTokens.get("avatar") + ".png");
             }
             if (!avatar.exists() || avatar.isDirectory()) {
                 logger.perror("Invalid Avatar Image File: " + avatar.getPath(), fileName);
