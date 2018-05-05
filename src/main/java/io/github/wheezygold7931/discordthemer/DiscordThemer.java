@@ -143,7 +143,13 @@ public class DiscordThemer {
         }
 
         if (metaTokens.containsKey("icon")) {
-            File image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
+            File image;
+            try {
+                image = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("icon") + ".png");
+            } catch (StringIndexOutOfBoundsException e) {
+                image = new File(filePath + "\\" + metaTokens.get("icon") + ".png");
+            }
+
             if (!image.exists() || image.isDirectory()) {
                 logger.perror("Invalid Server Image File: " + metaTokens.get("icon") + ".png", fileName);
                 logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
