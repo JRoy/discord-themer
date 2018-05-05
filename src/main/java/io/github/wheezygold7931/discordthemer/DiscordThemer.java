@@ -354,9 +354,9 @@ public class DiscordThemer {
 
         try {
             if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER) && token.getServerIconName() != null)
-                new RunRestAction(guild.getManager().setIcon(Icon.from(new File(themeDir.getPath() + "\\" + token.getServerIconName() + ".png"))), actionMode);
+                new RunRestAction(guild.getManager().setIcon(Icon.from(new File(themeDir.getPath() + token.getServerIconName() + ".png"))), actionMode);
             if (token.getBotIconName() != null)
-                new RunRestAction(jda.getSelfUser().getManager().setAvatar(Icon.from(new File(themeDir.getPath() + "\\" + token.getBotIconName() + ".png"))), actionMode);
+                new RunRestAction(jda.getSelfUser().getManager().setAvatar(Icon.from(new File(themeDir.getPath() + token.getBotIconName() + ".png"))), actionMode);
         } catch (IOException e) {
             logger.error("Your server icon or avatar file(s) are invalid or have been deleted/modified since the last parsing.");
             e.printStackTrace();
