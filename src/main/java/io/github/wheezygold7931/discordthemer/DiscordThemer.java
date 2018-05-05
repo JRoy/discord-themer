@@ -151,16 +151,21 @@ public class DiscordThemer {
             }
 
             if (!image.exists() || image.isDirectory()) {
-                logger.perror("Invalid Server Image File: " + metaTokens.get("icon") + ".png", fileName);
+                logger.perror("Invalid Server Image File: " + image.getPath(), fileName);
                 logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
                 return false;
             }
         }
 
         if (metaTokens.containsKey("avatar")) {
-            File avatar = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("avatar") + ".png");
+            File avatar;
+            try {
+                avatar = new File(filePath.substring(0, filePath.lastIndexOf('\\')) + "\\" + metaTokens.get("avatar") + ".png");
+            } catch (StringIndexOutOfBoundsException e) {
+                avatar = new File(filePath + "\\" + metaTokens.get("avatar") + ".png");
+            }
             if (!avatar.exists() || avatar.isDirectory()) {
-                logger.perror("Invalid Avatar Image File: " + metaTokens.get("icon") + ".png", fileName);
+                logger.perror("Invalid Avatar Image File: " + avatar.getPath(), fileName);
                 logger.perror(" ^ If you were trying to specify another directory, start the metadata value with a slash!", fileName);
                 return false;
             }
