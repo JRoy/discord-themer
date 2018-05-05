@@ -7,7 +7,7 @@ You will need to add this project as a dependency in a dependency manager of you
 To link to gradle:
 ```groovy
 dependencies {
-    compile 'com.github.JRoy:discord-themer:1.4'
+    compile 'com.github.JRoy:discord-themer:1.4.1'
 }
 
 repositories {
