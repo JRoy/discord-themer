@@ -5,11 +5,11 @@ import io.github.wheezygold7931.discordthemer.util.ActionMode;
 import io.github.wheezygold7931.discordthemer.util.DiscordThemerLogger;
 import io.github.wheezygold7931.discordthemer.util.ParserVersion;
 import io.github.wheezygold7931.discordthemer.util.RunRestAction;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Icon;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Role;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -69,7 +69,7 @@ public class DiscordThemer {
             }
         }
 
-        logger.info("Loaded and Parsed a total of " + String.valueOf(themeMap.size()) + " themes!");
+        logger.info("Loaded and Parsed a total of " + themeMap.size() + " themes!");
         logger.debug("Loaded Themes:");
         for (HashMap.Entry<String, ThemeToken> entry : themeMap.entrySet()) {
             ThemeToken token = entry.getValue();
@@ -246,7 +246,7 @@ public class DiscordThemer {
             //Convert image to png
             logger.debug("Starting Server Icon PNG Conversion...");
 
-            URLConnection iconconnection = new URL(guild.getIconUrl()).openConnection();
+            URLConnection iconconnection = new URL(Objects.requireNonNull(guild.getIconUrl())).openConnection();
             //Discord throws a 500 Error when User-Agents are not supplied
             iconconnection.setRequestProperty("User-Agent", "Discord-Themer");
             iconconnection.connect();
@@ -259,7 +259,7 @@ public class DiscordThemer {
 
             logger.debug("Starting Avatar PNG Conversion...");
 
-            URLConnection avatarconnection = new URL(jda.getSelfUser().getAvatarUrl()).openConnection();
+            URLConnection avatarconnection = new URL(Objects.requireNonNull(jda.getSelfUser().getAvatarUrl())).openConnection();
             //Discord throws a 500 Error when User-Agents are not supplied
             avatarconnection.setRequestProperty("User-Agent", "Discord-Themer");
             avatarconnection.connect();
@@ -271,7 +271,7 @@ public class DiscordThemer {
             writer.println("MetaData:avatar:avatar" + name);
 
             //Bot Nickname
-            writer.println("MetaData:nickname:" + guild.getMemberById(jda.getSelfUser().getId()).getNickname());
+            writer.println("MetaData:nickname:" + Objects.requireNonNull(guild.getMemberById(jda.getSelfUser().getId())).getNickname());
 
             //Parser Version
             writer.println("MetaData:parser:" + ParserVersion.currentVersion.getVersionString());
@@ -364,10 +364,10 @@ public class DiscordThemer {
             if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER) && token.getServerTitle() != null)
                 new RunRestAction(guild.getManager().setName(token.getServerTitle()), actionMode);
             if (guild.getSelfMember().hasPermission(Permission.NICKNAME_CHANGE) && token.getBotNickname() != null)
-                new RunRestAction(guild.getController().setNickname(guild.getMemberById(jda.getSelfUser().getId()), token.getBotNickname()), actionMode);
+                new RunRestAction(guild.modifyNickname(Objects.requireNonNull(guild.getMemberById(jda.getSelfUser().getId())), token.getBotNickname()), actionMode);
             for (HashMap.Entry<String, String> entry : token.getThemeRoleData().entrySet()) {
                 Role crole = guild.getRoleById(entry.getKey());
-                if (guild.getSelfMember().canInteract(crole) && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+                if (guild.getSelfMember().canInteract(Objects.requireNonNull(crole)) && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
                     new RunRestAction(crole.getManager().setName(entry.getValue()), actionMode);
                 } else {
                     logger.warn("Cannot Interact with Role ID: " + crole.getId() + ", Skipping!");

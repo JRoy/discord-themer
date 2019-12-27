@@ -1,5 +1,5 @@
 group 'io.github.wheezygold7931'
-version '1.4.1'
+version '1.5.0'
 
 apply plugin: 'idea'
 apply plugin: 'java'
@@ -12,6 +12,6 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.6.0_355'
+    compile 'net.dv8tion:JDA:4.1.0_87'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
 }
