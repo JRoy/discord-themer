@@ -1,9 +1,11 @@
-install: gradle wrapper --gradle-version 4.4
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 os:
   - linux
 sudo: true
+install:
+  - chmod +x gradlew
+  - "./gradlew assemble"
 script:
-  - ./gradlew build
+  - "./gradlew shadowJar"
